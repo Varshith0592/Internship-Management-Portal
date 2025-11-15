@@ -25,9 +25,9 @@ jobs:
       working-directory: ./source code/backend
 
 
-    - name: Setup Environment File
-      run: cp .env.test .env
-      working-directory: ./source code/backend
+    # - name: Setup Environment File
+    #   run: cp .env.test .env
+    #   working-directory: ./source code/backend
 
     - name: Run Tests
       run: npm test
