@@ -1,34 +1,38 @@
-name: Backend CI
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
-
+    needs: build
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Run Frontend Tests
+        run: |
+          cd client
+          npm install
+          npm test
 
-    - name: Use Node.js 18
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      # ✅ Added -- Inject environment variables into .env for backend tests
+      - name: Inject Environment Variables for Backend Tests
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          SECRET_KEY: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: test
+        run: |
+          cd backend
+          echo "DB_URL=${{ env.DB_URL }}" >> .env
+          echo "SECRET_KEY=${{ env.SECRET_KEY }}" >> .env
+          echo "✅ Environment variables injected in .env file"
 
-    - name: Install Dependencies
-      run: npm install
-      working-directory: ./source code/backend
-
-
-    # - name: Setup Environment File
-    #   run: cp .env.test .env
-    #   working-directory: ./source code/backend
-
-    - name: Run Tests
-      run: npm test
-      working-directory: ./source code/backend
+      - name: Run Backend Tests
+        run: |
+          cd backend
+          npm install
+          npm run test
