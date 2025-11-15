@@ -5,6 +5,24 @@ require('dotenv').config();
 
 const app = express();
 
+// Prometheus client
+const client = require('prom-client');
+client.collectDefaultMetrics({ timeout: 5000 });
+
+app.get('/metrics', async (req, res) => {
+  console.log("Request hit /metrics");
+  try {
+    const data = await client.register.metrics();
+    console.log("Collected metrics");
+    res.set('Content-Type', client.register.contentType);
+    res.send(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Metrics error");
+  }
+});
+
+
 //Import user routes
 const userRoutes = require('./routes/userRoute');
 

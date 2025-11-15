@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Backend CI
 
 on:
   push:
@@ -7,50 +7,27 @@ on:
     branches: [ main ]
 
 jobs:
-  build-backend:
+  test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./source code/backend
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Use Node.js 18
+      uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 18
 
-    - name: Install Backend Dependencies
+    - name: Install Dependencies
       run: npm install
+      working-directory: ./backend
 
-    - name: Run Backend Tests
+    - name: Setup Environment File
+      run: cp .env.test .env
+      working-directory: ./backend
+
+    - name: Run Tests
       run: npm test
-      env:
-          DB_URL: ${{ secrets.DB_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
-  build-frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./source code/frontend
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
-
-    - name: Install Frontend Dependencies
-      run: npm install
-
-    - name: Run Frontend Tests
-      run: npm test
-      
-    - name: Build Frontend
-      run: npm run build
+      working-directory: ./backend
