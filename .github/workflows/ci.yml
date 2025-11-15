@@ -22,12 +22,13 @@ jobs:
 
     - name: Install Dependencies
       run: npm install
-      working-directory: ./backend
+      working-directory: ./source code/backend
+
 
     - name: Setup Environment File
       run: cp .env.test .env
-      working-directory: ./backend
+      working-directory: ./source code/backend
 
     - name: Run Tests
       run: npm test
-      working-directory: ./backend
+      working-directory: ./source code/backend
